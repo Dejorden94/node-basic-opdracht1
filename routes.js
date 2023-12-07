@@ -10,6 +10,7 @@ const requestHandler = (req, res) => {
         res.write('<form action="/create-user" method="POST"><input name="username" placeholder="Fill in username" type="text"><button type="submit">Send</button></form>')
         res.write('</body>');
         res.write('</html>');
+        return res.end();
     }
     if (url === '/users') {
         res.write('<html>');
@@ -22,20 +23,21 @@ const requestHandler = (req, res) => {
         res.write('</ul>')
         res.write('</body>');
         res.write('</html>');
+        return res.end();
     }
     if (url === '/create-user' && method === 'POST') {
         const username = [];
         req.on('data', (chunk) => {
             username.push(chunk);
         });
-        return req.on('end', () => {
+        req.on('end', () => {
             const parsdBody = Buffer.concat(username).toString();
-            const usernameData = parsdBody.split('=')[1];
-            console.log(usernameData);
-            res.statusCode = 302;
-            res.setHeader('Location', '/');
-            return res.end();
+
+            console.log(parsdBody.split('=')[1]);
         });
+        res.statusCode = 302;
+        res.setHeader('Location', '/');
+        res.end();
     }
 
 };
